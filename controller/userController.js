@@ -63,7 +63,7 @@ userController.post("/login", async (req, res) => {
 userController.get("/allData/:id", async (req, res) => {
   try {
     const user = await User.findById({ _id: req.params.id });
-    res.json({ user });
+    res.json({ user,message:"User Data Fetched Successfully" });
   } catch (error) {
     res.status(500).json(error.message);
   }
@@ -72,7 +72,16 @@ userController.get("/rolechek/", async (req, res) => {
   const { role } = req.body;
   try {
     const user = await User.find({ role });
-    res.json({ user });
+    res.json({ user,message:"All User Fetched Succssfully" });
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
+});
+userController.put("/updateRole/:id", async (req, res) => {
+  const { role } = req.body;
+  try {
+    const user = await User.findByIdAndUpdate(req.params.id, { role });
+    res.json({ user,message:"User Role Changed Successfully" });
   } catch (error) {
     res.status(500).json(error.message);
   }
