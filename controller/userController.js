@@ -39,7 +39,7 @@ userController.post("/login", async (req, res) => {
       const compare = bcryptjs.compareSync(password, user.password);
 
       if (compare) {
-        const { name, email, _id } = user._doc;
+        const { name, email, _id, role } = user._doc;
         var token = jwt.sign(
           { id: user._id, name: user.name },
           process.env.KEY,
@@ -48,7 +48,14 @@ userController.post("/login", async (req, res) => {
           }
         );
 
-        res.json({ token, login: true, name, email, _id });
+        res.json({
+          token,
+          name,
+          email,
+          role,
+          _id,
+          message: "User Login successfully",
+        });
       } else {
         res.json({ message: "* Password is not matched" });
       }
@@ -63,25 +70,31 @@ userController.post("/login", async (req, res) => {
 userController.get("/allData/:id", async (req, res) => {
   try {
     const user = await User.findById({ _id: req.params.id });
-    res.json({ user,message:"User Data Fetched Successfully" });
+    res.json({ user, message: "User Data Fetched Successfully" });
   } catch (error) {
     res.status(500).json(error.message);
   }
 });
-userController.get("/rolechek/", async (req, res) => {
-  const { role } = req.body;
-  try {
-    const user = await User.find({ role });
-    res.json({ user,message:"All User Fetched Succssfully" });
-  } catch (error) {
-    res.status(500).json(error.message);
-  }
-});
+
 userController.put("/updateRole/:id", async (req, res) => {
   const { role } = req.body;
+  const changeRole = role === "general" ? "admin" : "general";
+
+
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, { role });
-    res.json({ user,message:"User Role Changed Successfully" });
+    const user = await User.findByIdAndUpdate(req.params.id, {
+      role: changeRole,
+    });
+    res.json({ user, message: "User Role Changed Successfully" });
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
+});
+
+userController.delete("/remove/:id", async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ message: "User Deleted Successfully" });
   } catch (error) {
     res.status(500).json(error.message);
   }
