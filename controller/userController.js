@@ -91,6 +91,17 @@ userController.put("/updateRole/:id", async (req, res) => {
   }
 });
 
+userController.put("/updateUser/:id", async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.params.id, {
+      ...req.body
+    });
+    res.json({ user, message: "User Role Changed Successfully" });
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
+});
+
 userController.delete("/remove/:id", async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
