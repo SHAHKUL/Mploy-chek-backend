@@ -3,6 +3,7 @@ const userController = require("express").Router();
 const User = require("../model/userModel");
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const authenticate = require("../middleware/auth");
 
 userController.get("/allData", async (req, res) => {
   try {
@@ -67,7 +68,7 @@ userController.post("/login", async (req, res) => {
   }
 });
 
-userController.get("/allData/:id", async (req, res) => {
+userController.get("/allData/:id",authenticate, async (req, res) => {
   try {
     const user = await User.findById({ _id: req.params.id });
     res.json({ user, message: "User Data Fetched Successfully" });
@@ -76,7 +77,7 @@ userController.get("/allData/:id", async (req, res) => {
   }
 });
 
-userController.put("/updateRole/:id", async (req, res) => {
+userController.put("/updateRole/:id",authenticate, async (req, res) => {
   const { role } = req.body;
   const changeRole = role === "general" ? "admin" : "general";
 
