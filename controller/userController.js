@@ -5,7 +5,7 @@ const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const authenticate = require("../middleware/auth");
 
-userController.get("/allData", async (req, res) => {
+userController.get("/allData",authenticate, async (req, res) => {
   try {
     const user = await User.find();
     res.json({ user, message: "All User Data Fetched Successfully" });
@@ -92,7 +92,7 @@ userController.put("/updateRole/:id",authenticate, async (req, res) => {
   }
 });
 
-userController.put("/updateUser/:id", async (req, res) => {
+userController.put("/updateUser/:id",authenticate, async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(req.params.id, {
       ...req.body
@@ -103,7 +103,7 @@ userController.put("/updateUser/:id", async (req, res) => {
   }
 });
 
-userController.delete("/remove/:id", async (req, res) => {
+userController.delete("/remove/:id",authenticate, async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
     res.json({ message: "User Deleted Successfully" });
